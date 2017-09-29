@@ -32,11 +32,14 @@ namespace RabbitPublish
 
                 using (var channel = connection.CreateModel())
                 {
-                    var result = channel.QueueDeclare(queue: "first-queue",
-                                 durable: true,
-                                 exclusive: false,
-                                 autoDelete: false,
-                                 arguments: null);
+                    var result = channel.QueueDeclare
+                    (
+                        queue: "first-queue",
+                        durable: true,
+                        exclusive: false,
+                        autoDelete: false,
+                        arguments: null
+                    );
 
                     Console.WriteLine($"Connected to queue: {result.QueueName}");
 
@@ -56,24 +59,27 @@ namespace RabbitPublish
                         messageProps.Persistent = true;
 
                         var sw = Stopwatch.StartNew();
+
                         sw.Start();
 
                         for (var i = 0; i < msgCount; i++)
                         {
-
                             var message = new Message
                             {
-                                WorkDelay = rnd.Next(1, 1000),
+                                WorkDelay = rnd.Next(500, 1000),
                                 Id = counter,
                                 Body = input
                             };
 
                             var body = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(message));
 
-                            channel.BasicPublish(exchange: "",
-                                                 routingKey: "first-queue",
-                                                 basicProperties: messageProps,
-                                                 body: body);
+                            channel.BasicPublish
+                            (
+                                exchange: "",
+                                routingKey: "first-queue",
+                                basicProperties: messageProps,
+                                body: body
+                            );
 
                             counter = counter + 1;
                         }
