@@ -14,6 +14,7 @@ namespace RabbitPublish
 {
     class Program
     {
+        static Random rnd = new Random();
         static void Main(string[] args)
         {
             var factory = new ConnectionFactory()
@@ -24,10 +25,11 @@ namespace RabbitPublish
                 Password = Env.Var("RABBITMQ_PASSWORD")
             };
 
-            Console.WriteLine("RabbitMQ Publisher started");
-
+            
             using (var connection = factory.CreateConnection())
             {
+                Console.WriteLine("RabbitMQ Publisher started");
+
                 using (var channel = connection.CreateModel())
                 {
                     var result = channel.QueueDeclare(queue: "first-queue",
@@ -42,11 +44,8 @@ namespace RabbitPublish
                     while (true)
                     {
                         var input = Console.ReadLine();
-                        if (input == "quit")
-                        {
-                            break;
-                        }
 
+                        if (input == "quit") break;
 
                         Console.Write("How many times do you want to send the message? ");
 
@@ -64,6 +63,7 @@ namespace RabbitPublish
 
                             var message = new Message
                             {
+                                WorkDelay = rnd.Next(1, 1000),
                                 Id = counter,
                                 Body = input
                             };

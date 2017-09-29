@@ -1,14 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using Newtonsoft.Json;
 
 using Messages;
 using Common;
+using System.Threading.Tasks;
 
 namespace RabbitSubscribe
 {
@@ -43,6 +41,7 @@ namespace RabbitSubscribe
                     var body = ea.Body;
                     var message = Encoding.UTF8.GetString(body);
                     var typedMessage = JsonConvert.DeserializeObject<Message>(message);
+                    await Task.Delay(typedMessage.WorkDelay);
                     await Console.Out.WriteLineAsync($"Recieved Message with Id = {typedMessage.Id} and Body {typedMessage.Body}");
                 };
 
